@@ -1,13 +1,17 @@
-from flask import Flask, jsonify
-import os
+from flask import Flask, request, jsonify
+import eng_to_ipa as ipa
+from waitress import serve
 
 app = Flask(__name__)
 
-
-@app.route('/')
-def index():
-    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
-
+@app.route('/transcribe', methods=['GET'])
+def transcribe():
+    text = request.args.get('text', '')  # Get text from query parameter
+    if text:
+        transcription = ipa.convert(text)
+        return jsonify({'transcription': transcription}), 200
+    else:
+        return jsonify({'error': 'No text provided'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True, port=os.getenv("PORT", default=5000))
+    serve(app, host='127.0.0.1', port=5000, threads=2)
