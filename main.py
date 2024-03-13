@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import eng_to_ipa as ipa
-from waitress import serve
 
 app = Flask(__name__)
 
@@ -14,6 +13,4 @@ def transcribe():
         return jsonify({'error': 'No text provided'}), 400
 
 if __name__ == '__main__':
-    import os
-    serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)), threads=2)
-
+    app.run(debug=True)
